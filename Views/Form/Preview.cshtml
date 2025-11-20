@@ -1,0 +1,81 @@
+@model FormModel
+@{
+    ViewData["Title"] = "Form Preview - " + Model.Title;
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="mb-3">
+            <a href="@Url.Action("Grid", "Form")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">@Model.Title</h4>
+                <small>Created: @Model.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</small>
+            </div>
+            <div class="card-body">
+                <form id="previewForm" class="needs-validation">
+                    @if (Model.DropdownFields != null && Model.DropdownFields.Count > 0)
+                    {
+                        foreach (var field in Model.DropdownFields)
+                        {
+                            <div class="mb-3">
+                                <label for="field_@field.FieldId" class="form-label">
+                                    @field.Label
+                                    @if (field.IsRequired)
+                                    {
+                                        <span class="text-danger">*</span>
+                                    }
+                                </label>
+                                <select class="form-select form-control-readonly" id="field_@field.FieldId" disabled>
+                                    <option value="">-- Select --</option>
+                                    @foreach (var option in field.Options)
+                                    {
+                                        if (option == field.SelectedValue)
+                                        {
+                                            <option value="@option" selected>@option</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@option">@option</option>
+                                        }
+                                    }
+                                </select>
+                                <small class="text-muted d-block mt-1">
+                                    @if (field.IsRequired)
+                                    {
+                                        <span class="badge bg-danger">Required</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Optional</span>
+                                    }
+                                </small>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            This form has no dropdown fields.
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("Grid", "Form")" class="btn btn-secondary">Close</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control-readonly {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
+</style>

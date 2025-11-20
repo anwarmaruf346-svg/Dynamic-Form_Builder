@@ -1,0 +1,126 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background-color: #f8f9fa;
+}
+
+/* Form Builder Styles */
+.dropdown-field-item {
+  position: relative;
+  background-color: white;
+  border-left: 4px solid #0d6efd;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+  font-weight: bold;
+}
+
+.card {
+  border-radius: 8px;
+  border: none;
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0;
+  padding: 1.25rem;
+}
+
+/* DataTable Styles */
+.dataTables_wrapper {
+  padding-top: 1rem;
+}
+
+table.dataTable tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Required field indicator */
+.form-label .text-danger::after {
+  content: " (required)";
+  font-size: 0.85rem;
+}
+
+/* Readonly field styling */
+.form-control-readonly {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #6c757d;
+}
+
+.form-select-readonly {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Validation styles */
+.field-label-error,
+.titleError {
+  display: block;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Badge styles */
+.badge {
+  padding: 0.35em 0.65em;
+  font-size: 0.75rem;
+}
+
+/* Navbar enhancements */
+.navbar {
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+}
+
+/* Footer */
+footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 2rem 0 1rem 0;
+  margin-top: 3rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dropdown-field-item .row {
+    margin-bottom: 0.5rem;
+  }
+  
+  .col-md-5, .col-md-3, .col-md-1 {
+    margin-bottom: 0.5rem;
+  }
+}

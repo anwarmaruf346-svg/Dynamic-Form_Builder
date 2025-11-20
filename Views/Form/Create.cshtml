@@ -1,0 +1,207 @@
+@model CreateFormViewModel
+@{
+    ViewData["Title"] = "Create Form";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Create New Form</h4>
+            </div>
+            <div class="card-body">
+                <form id="createFormForm">
+                    <div class="mb-3">
+                        <label for="Title" class="form-label">Form Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="Title" name="Title" placeholder="Enter form title" required>
+                        <span class="text-danger" id="titleError"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Dropdown Fields</label>
+                        <div id="dropdownFieldsContainer">
+                            <div class="dropdown-field-item mb-3 p-3 border rounded bg-light" data-field-index="0">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label class="form-label">Field Label <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control field-label" placeholder="e.g., Select Country" required>
+                                        <span class="text-danger field-label-error"></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Required</label>
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input field-required" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Default Value</label>
+                                        <select class="form-select field-value" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                            <option value="Option 3">Option 3</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1 d-flex align-items-end">
+                                        <button type="button" class="btn btn-danger btn-sm btn-remove-field w-100" style="display:none;">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-info btn-sm" id="addMoreBtn">
+                            <i class="bi bi-plus"></i> Add More Field
+                        </button>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Create Form
+                        </button>
+                        <a href="@Url.Action("Grid", "Form")" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        let fieldCount = 1;
+
+        // Form validation
+        $("#createFormForm").validate({
+            rules: {
+                Title: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100
+                }
+            },
+            messages: {
+                Title: {
+                    required: "Form title is required",
+                    minlength: "Title must be at least 3 characters",
+                    maxlength: "Title cannot exceed 100 characters"
+                }
+            },
+            submitHandler: function (form) {
+                submitForm();
+            }
+        });
+
+        // Add more field
+        $("#addMoreBtn").click(function () {
+            addField();
+        });
+
+        // Remove field
+        $(document).on("click", ".btn-remove-field", function () {
+            $(this).closest(".dropdown-field-item").remove();
+            updateRemoveButtons();
+        });
+
+        function addField() {
+            const fieldHtml = `
+                <div class="dropdown-field-item mb-3 p-3 border rounded bg-light" data-field-index="${fieldCount}">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="form-label">Field Label <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control field-label" placeholder="e.g., Select Country" required>
+                            <span class="text-danger field-label-error"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Required</label>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input field-required" type="checkbox">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Default Value</label>
+                            <select class="form-select field-value" required>
+                                <option value="">-- Select --</option>
+                                <option value="Option 1">Option 1</option>
+                                <option value="Option 2">Option 2</option>
+                                <option value="Option 3">Option 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger btn-sm btn-remove-field w-100">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $("#dropdownFieldsContainer").append(fieldHtml);
+            fieldCount++;
+            updateRemoveButtons();
+        }
+
+        function updateRemoveButtons() {
+            const fieldCount = $(".dropdown-field-item").length;
+            $(".btn-remove-field").toggle(fieldCount > 1);
+        }
+
+        function submitForm() {
+            // Validate fields
+            let isValid = true;
+            $(".dropdown-field-item").each(function () {
+                const label = $(this).find(".field-label").val();
+                if (!label || label.trim() === "") {
+                    $(this).find(".field-label-error").text("Field label is required");
+                    isValid = false;
+                } else {
+                    $(this).find(".field-label-error").text("");
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            // Prepare data
+            const formData = {
+                Title: $("#Title").val(),
+                DropdownFields: []
+            };
+
+            $(".dropdown-field-item").each(function () {
+                formData.DropdownFields.push({
+                    Label: $(this).find(".field-label").val(),
+                    IsRequired: $(this).find(".field-required").is(":checked"),
+                    SelectedValue: $(this).find(".field-value").val(),
+                    AvailableOptions: ["Option 1", "Option 2", "Option 3"]
+                });
+            });
+
+            // Submit via AJAX
+            $.ajax({
+                url: '@Url.Action("Create", "Form")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Form created successfully!',
+                            confirmButtonText: 'Go to Grid'
+                        }).then(() => {
+                            window.location.href = '@Url.Action("Grid", "Form")';
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire('Error', 'An error occurred while creating the form', 'error');
+                }
+            });
+        }
+
+        updateRemoveButtons();
+    });
+</script>
+}

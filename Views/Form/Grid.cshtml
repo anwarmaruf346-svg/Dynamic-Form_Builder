@@ -1,0 +1,74 @@
+@{
+    ViewData["Title"] = "Forms Grid";
+}
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2>Forms List</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="@Url.Action("Create", "Form")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Form
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <table id="formsTable" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Form ID</th>
+                    <th>Title</th>
+                    <th>Created Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Initialize DataTable with server-side processing
+        $('#formsTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '@Url.Action("GetFormsData", "Form")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: function (d) {
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                { data: 'formId', name: 'FormId' },
+                { data: 'title', name: 'Title' },
+                { data: 'createdDateFormatted', name: 'CreatedDate' },
+                {
+                    data: 'formId',
+                    render: function (data, type, row) {
+                        return '<a href="/Form/Preview/' + data + '" class="btn btn-sm btn-info" title="Preview">' +
+                            '<i class="bi bi-eye"></i> Preview' +
+                            '</a>';
+                    },
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [[2, 'desc']],
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50], [5, 10, 25, 50]],
+            dom: 'lBfrtip',
+            buttons: ['copy', 'csv', 'excel', 'print'],
+            language: {
+                processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>'
+            }
+        });
+    });
+</script>
+}
